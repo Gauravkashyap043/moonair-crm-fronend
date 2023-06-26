@@ -95,15 +95,15 @@ export class Api {
 
   static handleError(apiParams, error) {
     if (error) {
-      if (error.status === 401) {
-        Api.logOut();
-        Api.showErrorMessage("Session expired kindly login again.");
-        return;
-      }
+      // if (error.status === 401) {
+      //   Api.logOut();
+      //   Api.showErrorMessage("Session expired kindly login again.");
+      //   return;
+      // }
       Api.showErrorMessage(
         error["data"]["message"] ? error["data"]["message"] : error["error"]
       );
-      Api.stopLoader();
+      // Api.stopLoader();
     }
   }
 

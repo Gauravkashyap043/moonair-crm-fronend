@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useRef } from "react";
 import "./inputField.css";
 import { BsFillEyeSlashFill, BsFillEyeFill } from "react-icons/bs";
 const InputField = (props) => {
