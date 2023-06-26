@@ -3,21 +3,27 @@ import ComplianForm from "../../components/ComplainForm/ComplianForm";
 import { toast } from "react-toastify";
 import { Api } from "../../classes/Api";
 import { apiEndPoints } from "../../constants/apiEndPoints";
+import { Helper } from "../../classes/Helper";
+import { LocalStorages } from "../../classes/LocalStorages";
+import { useLocation } from "react-router-dom";
 
 const Service = () => {
   const [activeTab, setActiveTab] = useState("registerComplain");
   const [loading, setLoading] = useState(false);
-
+  const [complainData, setComplainData] = useState([]);
+  const location = useLocation();
   const handleTabClick = (tabName) => {
     setActiveTab(tabName);
   };
 
+  console.log(location);
   const getComplainDataByRegister = () => {
     const apiParams = {
-      url: `${apiEndPoints.getComplainByRegister}`,
+      url: `${apiEndPoints.getComplainByRegister}/${location.state.id}`,
       requestMethod: "get",
       response: (res) => {
         console.log("---res-------", res);
+        setComplainData(res.result.complaints);
       },
       errorFunction: (error) => {
         if (error == undefined) {
@@ -37,9 +43,11 @@ const Service = () => {
     Api.callApi(apiParams);
   };
 
-  // useEffect(() => {
-  //   getComplainDataByRegister();
-  // }, []);
+  useEffect(() => {
+    getComplainDataByRegister();
+  }, []);
+
+  console.log("data-----------------------------------", complainData);
 
   const notify = () => toast("Logout not working right now");
   return (
@@ -95,7 +103,7 @@ const Service = () => {
                 </tr>
               </thead>
               <tbody>
-                {/* {data.map((item) => (
+                {complainData.map((item) => (
                   <tr key={item._id}>
                     <td className="py-2 px-4">{item.complainId}</td>
                     <td className="py-2 px-4">{item.customerName}</td>
@@ -112,7 +120,7 @@ const Service = () => {
                     <td className="py-2 px-4">{item.registerBy}</td>
                     <td className="py-2 px-4">{item.complainStatus}</td>
                   </tr>
-                ))} */}
+                ))}
               </tbody>
             </table>
           </div>
