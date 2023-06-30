@@ -1,0 +1,30 @@
+.allComplain-table {
+  border-collapse: separate;
+  border-spacing: 0 2px;
+}
+
+.allComplain-table > thead tr {
+  height: 37px;
+  text-align: left;
+}
+.allComplain-table > tbody td {
+  height: 4rem;
+}
+.allComplain-table th {
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  background: #ffffff;
+}
+.allComplain-table td {
+  border: 0.5px solid rgba(0, 0, 0, 0.2);
+  background: #ffffff;
+}
+.allComplain-table > thead tr span {
+  margin-left: 4%;
+}
+.allComplain-table > tbody tr span {
+  margin-left: 4%;
+}
+.complaind-details { 
+  width: 100%;
+}
+
