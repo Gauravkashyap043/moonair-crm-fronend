@@ -89,17 +89,37 @@ const Service = () => {
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="border">
-                <tr className="border">
-                  <th className="py-2 px-4">Complain ID</th>
-                  <th className="py-2 px-4">Customer Name</th>
-                  <th className="py-2 px-4">Phone Number</th>
-                  <th className="py-2 px-4">Address</th>
-                  <th className="py-2 px-4">City</th>
-                  <th className="py-2 px-4">State</th>
-                  <th className="py-2 px-4">Country</th>
-                  <th className="py-2 px-4">Postal Code</th>
-                  <th className="py-2 px-4">Problem</th>
-                  <th className="py-2 px-4">Registered By</th>
+                <tr>
+                  <th>
+                    <span>Complain ID</span>
+                  </th>
+                  <th>
+                    <span>Cost. Name</span>
+                  </th>
+                  <th>
+                    <span>Date</span>
+                  </th>
+                  <th>
+                    <span>Address</span>
+                  </th>
+                  <th>
+                    <span>City</span>
+                  </th>
+                  <th>
+                    <span>State</span>
+                  </th>
+                  <th>
+                    <span>Problems</span>
+                  </th>
+                  <th>
+                    <span>Register By</span>
+                  </th>
+                  <th>
+                    <span>Status</span>
+                  </th>
+                  <th className="text-center">
+                    <span>View</span>
+                  </th>
                 </tr>
               </thead>
               <tbody>

@@ -7,16 +7,18 @@ import { Route, Routes, useLocation } from "react-router-dom";
 import CreateEmployee from "../../components/CreateEmployee/CreateEmployee";
 import "./admin.css";
 import moment from "moment";
-import { Modal } from "@mui/material";
+import { CircularProgress, Modal } from "@mui/material";
 const Admin = () => {
   const [activeTab, setActiveTab] = useState("getAllComplain");
   const [loading, setLoading] = useState(false);
+  const [complainLoading, setComplainLoading] = useState(false);
   const [complainData, setComplainData] = useState([]);
   const [singleComplainData, setSingleComplainData] = useState([]);
   const [complainModal, setComplainModal] = useState(false);
   // const [complainId, setComplianId] = useState("");
   const [data, setData] = useState([]);
   const [technicianData, setTechnicianData] = useState([]);
+  const [assignTechnician, setAssignTechnician] = useState("");
   const location = useLocation();
   const notify = () => toast("Logout not working right now");
   const handleTabClick = (tabName) => {
@@ -49,6 +51,7 @@ const Admin = () => {
 
   useEffect(() => {
     getComplainData();
+    // getTechnicianEmployee();
   }, []);
 
   const getSingleComplaint = (Id) => {
@@ -57,7 +60,7 @@ const Admin = () => {
       requestMethod: "get",
       response: (res) => {
         console.log("---singleRes-------", res.result.complaint);
-        setTechnicianData(res.result.complaint);
+        setData(res.result.complaint);
       },
       errorFunction: (error) => {
         if (error == undefined) {
@@ -82,8 +85,7 @@ const Admin = () => {
       requestMethod: "get",
       response: (res) => {
         console.log("---technician-------", res);
-        // setData(res.result.complaint);
-        // setTechnicianData(re)
+        setTechnicianData(res);
       },
       errorFunction: (error) => {
         if (error == undefined) {
@@ -101,6 +103,70 @@ const Admin = () => {
     };
     Api.callApi(apiParams);
   };
+
+  const closeComplaint = (id) => {
+    setComplainLoading(true);
+    const apiParams = {
+      url: `${apiEndPoints.updateComplainStatus}`,
+      requestMethod: "put",
+      input: {
+        complianId: id,
+        complainStatus: "CLOSE",
+      },
+      response: (res) => {
+        console.log("---closeComplainRes-------", res);
+        if (res.status === 200) {
+          toast.success(res.message);
+        }
+        setComplainLoading(false);
+      },
+      errorFunction: (error) => {
+        if (error == undefined) {
+        }
+        console.log("---error--", error);
+        toast.error(error.message);
+        setComplainLoading(false);
+      },
+      endFunction: () => {
+        console.log("End Function Called");
+      },
+    };
+    Api.callApi(apiParams);
+  };
+
+  const AssignedCompliant = (id) => {
+    console.log("-----------=-======-=-=-==-=-=-=", assignTechnician, id);
+    const apiParams = {
+      url: `${apiEndPoints.updateComplainStatus}`,
+      requestMethod: "put",
+      input: {
+        complainStatus: "ALLOTED",
+        complainId: id,
+        assignedTo: assignTechnician,
+      },
+      response: (res) => {
+        console.log("---closeComplainRes-------", res);
+        if (res.status === 200) {
+          toast.success(res.message);
+          getSingleComplaint(id);
+          setComplainLoading(false);
+          setAssignTechnician("");
+        }
+      },
+      errorFunction: (error) => {
+        if (error == undefined) {
+        }
+        console.log("---error--", error);
+        toast.error(error.message);
+        setComplainLoading(false);
+      },
+      endFunction: () => {
+        console.log("End Function Called");
+      },
+    };
+    Api.callApi(apiParams);
+  };
+
   return (
     <div className="w-screen h-screen">
       <div className="flex h-[100px] border justify-between items-center px-4">
@@ -225,8 +291,8 @@ const Admin = () => {
       >
         <div className="modal w-[500px] bg-white">
           <p className="font-bold text-lg text-center">Complain Status</p>
-          {data.map((items, i) => {
-            return (
+          {Array.isArray(data) && data.length > 0 ? (
+            data.map((items, i) => (
               <div className="w-full" key={i}>
                 <div className="complain-details w-full flex gap-4 items-center">
                   <div className="font-bold">Compliant Id :</div>
@@ -260,6 +326,20 @@ const Admin = () => {
                   <div className="font-bold">Product :</div>
                   <div>Cooler</div>
                 </div>
+                <div className="complain-details w-full flex gap-4 items-center">
+                  <div className="font-bold">Complain Status :</div>
+                  <div>{items.complainStatus}</div>
+                </div>
+                {items.complainStatus === "ALLOTED" && (
+                  <div className="complain-details w-full flex gap-4 items-center">
+                    <div className="font-bold">Assigned To :</div>
+                    <div>
+                      {items.assignedTo.fullName +
+                        " " +
+                        items.assignedTo.mobileNumber}
+                    </div>
+                  </div>
+                )}
                 <div>
                   <div className="font-bold">Problems:</div>
                   <div className="border rounded w-full h-[100px]">
@@ -267,20 +347,66 @@ const Admin = () => {
                   </div>
                 </div>
                 <div>
-                  <div>
-                    <label htmlFor="">Assign To:</label> <br />
-                    <select name="" id="">
-                      <option value="">Assign to technician</option>
-                      {/* {technicianData.map((items, i) => {
-                        return <option value="" key={i}></option>;
-                      })} */}
-                    </select>
+                  <label htmlFor="">Assign To:</label> <br />
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex-1">
+                      <select
+                        onChange={(e) => setAssignTechnician(e.target.value)}
+                        onClick={getTechnicianEmployee}
+                        className="w-full border mt-[3px] h-[41px] rounded outline-none cursor-pointer border-[#b9bcbf]"
+                      >
+                        <option value="">Assign to technician</option>
+                        {Array.isArray(technicianData) &&
+                        technicianData.length > 0 ? (
+                          technicianData.map((items, i) => (
+                            <option value={items._id} key={i}>
+                              {items.fullName}
+                            </option>
+                          ))
+                        ) : (
+                          <option value="" disabled>
+                            No technicians available
+                          </option>
+                        )}
+                      </select>
+                    </div>
+                    {!!assignTechnician && (
+                      <div>
+                        <button
+                          className="w-[200px] py-2 border border-black rounded bg-black text-white hover:bg-white hover:text-black"
+                          onClick={() => AssignedCompliant(items.complainId)}
+                        >
+                          {loading ? (
+                            <CircularProgress color="inherit" size={20} />
+                          ) : (
+                            "Assign"
+                          )}
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
-                d
+                {items.complainStatus === "ALLOTED" ? (
+                  <div className="w-full flex justify-center items-center mt-5">
+                    <button
+                      className="w-[200px] py-2 border border-black rounded bg-black text-white hover:bg-white hover:text-black"
+                      onClick={() => closeComplaint(items.complainId)}
+                    >
+                      {complainLoading ? (
+                        <CircularProgress color="inherit" size={20} />
+                      ) : (
+                        "Close Complaint"
+                      )}
+                    </button>
+                  </div>
+                ) : (
+                  ""
+                )}
               </div>
-            );
-          })}
+            ))
+          ) : (
+            <p>No data available</p>
+          )}
         </div>
       </Modal>
     </div>

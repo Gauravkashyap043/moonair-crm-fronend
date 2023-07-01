@@ -6,4 +6,5 @@ export const apiEndPoints = {
   createEmployee: "employee/create",
   getEmployeeType: "employee/employee-types",
   getEmployeeByType: "employee/get-employees-by-type",
+  updateComplainStatus:"form/update-status"
 };
