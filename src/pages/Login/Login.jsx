@@ -53,6 +53,8 @@ const Login = () => {
             toast.success(res.message);
             if (res.result.employeeType[0].type === "service") {
               navigate("/service", { state: { id: res.result._id } });
+            } else if (res.result.employeeType[0].type === "technician") {
+              navigate("/technician", { state: { id: res.result._id } });
             } else {
               navigate("/admin");
             }
