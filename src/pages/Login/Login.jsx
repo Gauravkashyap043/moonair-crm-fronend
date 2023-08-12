@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./login.css";
 import InputField from "../../components/InputField/InputField";
 import { Api } from "../../classes/Api";
@@ -52,9 +52,13 @@ const Login = () => {
             setLoading(false);
             toast.success(res.message);
             if (res.result.employeeType[0].type === "service") {
-              navigate("/service", { state: { id: res.result._id } });
+              navigate("/service", {
+                state: { id: res.result._id, data: res.result },
+              });
             } else if (res.result.employeeType[0].type === "technician") {
-              navigate("/technician", { state: { id: res.result._id } });
+              navigate("/technician", {
+                state: { id: res.result._id, data: res.result },
+              });
             } else {
               navigate("/admin");
             }
@@ -81,6 +85,9 @@ const Login = () => {
     }
   };
 
+  useEffect(() => {
+    Helper.logOut();
+  }, []);
   return (
     <div className="login-container h-screen w-screen">
       <div className="w-full h-[100px] border text-center">Login page</div>

@@ -15,8 +15,8 @@ function App() {
     <div>
       <Routes>
         <Route path="/" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/test" element={<Test />} />
+        <Route path="/admin-register" element={<Register />} />
+        {/* <Route path="/test" element={<Test />} /> */}
         <Route path="/admin" element={<Admin />} />
         <Route path="/service" element={<Service />} />
         <Route path="/technician" element={<Technician />} />

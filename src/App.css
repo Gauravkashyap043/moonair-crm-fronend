@@ -17,6 +17,7 @@
 }
 .allComplain-table > tbody td {
   height: 4rem;
+  padding: 0 5px;
 }
 .allComplain-table th {
   border: 1px solid rgba(0, 0, 0, 0.2);

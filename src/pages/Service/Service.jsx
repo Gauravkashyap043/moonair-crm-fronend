@@ -5,7 +5,8 @@ import { Api } from "../../classes/Api";
 import { apiEndPoints } from "../../constants/apiEndPoints";
 import { Helper } from "../../classes/Helper";
 import { LocalStorages } from "../../classes/LocalStorages";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import moment from "moment";
 
 const Service = () => {
   const [activeTab, setActiveTab] = useState("registerComplain");
@@ -15,6 +16,8 @@ const Service = () => {
   const handleTabClick = (tabName) => {
     setActiveTab(tabName);
   };
+
+  const navigate = useNavigate();
 
   console.log(location);
   const getComplainDataByRegister = () => {
@@ -43,6 +46,27 @@ const Service = () => {
     Api.callApi(apiParams);
   };
 
+  const handleLogout = () => {
+    // setLoading(true);
+    const apiParams = {
+      url: apiEndPoints.logOut,
+      requestMethod: "post",
+      response: (res) => {
+        console.log(res);
+        toast.success(res.message);
+        // setLoading(false);
+        Helper.logOut()
+        navigate("/");
+      },
+      errorFunction: (error) => {
+        setLoading(false);
+        toast.error(error.error);
+        console.error(error);
+      },
+    };
+    Api.callApi(apiParams);
+  };
+
   useEffect(() => {
     getComplainDataByRegister();
   }, []);
@@ -53,7 +77,7 @@ const Service = () => {
   return (
     <div className="w-screen h-screen">
       <div className="flex h-[100px] border justify-around items-center">
-        <div>Moon Air Crm</div>
+        <div>Hello, {location.state.data.fullName}</div>
         <div className="flex gap-3">
           <div
             className={`border-b-2 pb-[2px] hover:border-blue-500 cursor-pointer ${
@@ -74,7 +98,7 @@ const Service = () => {
         </div>
         <div
           className="border-b-2 pb-[2px] hover:border-blue-500 cursor-pointer"
-          onClick={notify}
+          onClick={handleLogout}
         >
           Logout
         </div>
@@ -87,14 +111,14 @@ const Service = () => {
       {activeTab === "myComplain" && (
         <div>
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="border">
+            <table className="allComplain-table w-full">
+              <thead>
                 <tr>
                   <th>
                     <span>Complain ID</span>
                   </th>
                   <th>
-                    <span>Cost. Name</span>
+                    <span>Costumer Name</span>
                   </th>
                   <th>
                     <span>Date</span>
@@ -111,36 +135,41 @@ const Service = () => {
                   <th>
                     <span>Problems</span>
                   </th>
-                  <th>
+                  {/* <th>
                     <span>Register By</span>
-                  </th>
-                  <th>
-                    <span>Status</span>
-                  </th>
-                  <th className="text-center">
+                  </th> */}
+                  {/* <th className="text-center">
                     <span>View</span>
-                  </th>
+                  </th> */}
                 </tr>
               </thead>
               <tbody>
-                {complainData.map((item) => (
-                  <tr key={item._id}>
-                    <td className="py-2 px-4">{item.complainId}</td>
-                    <td className="py-2 px-4">{item.customerName}</td>
-                    <td className="py-2 px-4">{item.phoneNumber}</td>
-                    <td className="py-2 px-4">{item.address}</td>
-                    <td className="py-2 px-4">{item.city}</td>
-                    <td className="py-2 px-4">{item.state}</td>
-                    <td className="py-2 px-4">{item.country}</td>
-                    <td className="py-2 px-4">{item.postalCode}</td>
-                    <td className="py-2 px-4">
-                      {new Date(item.dopDate).toLocaleDateString()}
-                    </td>
-                    <td className="py-2 px-4">{item.problem}</td>
-                    <td className="py-2 px-4">{item.registerBy}</td>
-                    <td className="py-2 px-4">{item.complainStatus}</td>
-                  </tr>
-                ))}
+                {Array.isArray(complainData) &&
+                  complainData?.map((items, i) => {
+                    return (
+                      <tr key={i}>
+                        <td>{items.complainId}</td>
+                        <td>{items.customerName}</td>
+                        <td>{moment(items.dopDate).format("DD-MM-YYYY")}</td>
+                        <td>{items.address}</td>
+                        <td>{items.city}</td>
+                        <td>{items?.state}</td>
+                        <td>{items.problem}</td>
+                        {/* <td>{items.registerBy.fullName}</td> */}
+                        {/* <td className="text-center">
+                          <button
+                            className="border px-2 py-1 text-white bg-black rounded w-[5rem]"
+                            // onClick={() => (
+                            //   setComplainModal(true),
+                            //   getSingleComplaint(items.complainId)
+                            // )}
+                          >
+                            View
+                          </button>
+                        </td> */}
+                      </tr>
+                    );
+                  })}
               </tbody>
             </table>
           </div>

@@ -3,11 +3,12 @@ import ComplianForm from "../../components/ComplainForm/ComplianForm";
 import { toast } from "react-toastify";
 import { Api } from "../../classes/Api";
 import { apiEndPoints } from "../../constants/apiEndPoints";
-import { Route, Routes, useLocation } from "react-router-dom";
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import CreateEmployee from "../../components/CreateEmployee/CreateEmployee";
 import "./admin.css";
 import moment from "moment";
 import { CircularProgress, Modal } from "@mui/material";
+import { Helper } from "../../classes/Helper";
 const Admin = () => {
   const [activeTab, setActiveTab] = useState("getAllComplain");
   const [loading, setLoading] = useState(false);
@@ -20,6 +21,7 @@ const Admin = () => {
   const [technicianData, setTechnicianData] = useState([]);
   const [assignTechnician, setAssignTechnician] = useState("");
   const location = useLocation();
+  const navigate = useNavigate()
   const notify = () => toast("Logout not working right now");
   const handleTabClick = (tabName) => {
     setActiveTab(tabName);
@@ -167,6 +169,27 @@ const Admin = () => {
     Api.callApi(apiParams);
   };
 
+  const handleLogout = () => {
+    // setLoading(true);
+    const apiParams = {
+      url: apiEndPoints.logOut,
+      requestMethod: "post",
+      response: (res) => {
+        console.log(res);
+        toast.success(res.message);
+        // setLoading(false);
+        Helper.logOut()
+        navigate("/");
+      },
+      errorFunction: (error) => {
+        setLoading(false);
+        toast.error(error.error);
+        console.error(error);
+      },
+    };
+    Api.callApi(apiParams);
+  };
+
   return (
     <div className="w-screen h-screen">
       <div className="flex h-[100px] border justify-between items-center px-4">
@@ -191,7 +214,7 @@ const Admin = () => {
         </div>
         <div
           className="border-b-2 pb-[2px] hover:border-blue-500 cursor-pointer"
-          onClick={notify}
+          onClick={handleLogout}
         >
           Logout
         </div>

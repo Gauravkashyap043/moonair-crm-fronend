@@ -3,58 +3,60 @@ import { apiEndPoints } from "../../constants/apiEndPoints";
 import { Api } from "../../classes/Api";
 import axios from "axios";
 const Test = () => {
-  // const [selectedFile, setSelectedFile] = useState(null);
+  const [postImage, setPostImage] = useState({
+    myFile: "",
+  });
 
-  // const handleFileSelect = (event) => {
-  //   setSelectedFile(event.target.files[0]);
-  // };
-  // const handleUpload = () => {
-  //   const apiParams = {
-  //     url: `${apiEndPoints.upload}`,
-  //     requestMethod: "post",
-  //     response: (res) => {
-  //       console.log("---res-------", res);
-  //     },
-  //     errorFunction: (error) => {
-  //       console.log("---error--", error);
-  //     },
-  //     endFunction: () => {
-  //       console.log("End Function Called");
-  //     },
-  //     input: {
-  //       fileName: "",
-  //     },
-  //   };
-  //   Api.callApi(apiParams);
-  // };
-    const [selectedFile, setSelectedFile] = useState(null);
+const url = "http://localhost:5000/uploads";
+const createImage = (newImage) => axios.post(url, newImage);
+
+  const createPost = async (post) => {
+    try {
+      await createImage(post);
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    createPost(postImage);
+  };
   
-    const handleFileSelect = (event) => {
-      setSelectedFile(event.target.files[0]);
-    };
-  
-    const handleUpload = () => {
-      const formData = new FormData();
-      formData.append('image', selectedFile);
-  
-      axios.post('http//localhost:5000/upload', formData)
-        .then((response) => {
-          alert('Image uploaded successfully');
-        })
-        .catch((error) => {
-          alert(error);
-        });
-    };
+
+  const convertToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsDataURL(file);
+      fileReader.onload = () => {
+        resolve(fileReader.result);
+      };
+      fileReader.onerror = (error) => {
+        reject(error);
+      };
+    });
+  };
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    const base64 = await convertToBase64(file);
+    setPostImage({ ...postImage, myFile: base64 });
+  };
+
   return (
     <div>
-      <h1>Test File upload</h1>
-      <label>Uplaod image</label>
-      <div>
-        <input type="file" onChange={handleFileSelect} />
-        <button onClick={handleUpload}>Upload</button>
-      </div>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="file"
+          label="Image"
+          name="myFile"
+          accept=".jpeg, .png, .jpg"
+          onChange={(e) => handleFileUpload(e)}
+        />
+
+        <button className="border px-3 py-1 rounded bg-black text-white">Submit</button>
+      </form>
     </div>
   );
-};
+}
 
 export default Test;

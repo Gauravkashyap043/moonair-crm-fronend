@@ -209,10 +209,11 @@ const CreateEmployee = () => {
             {loading ? (
               <CircularProgress color="inherit" size={20} />
             ) : (
-              "Submit"
+              "Register"
             )}
           </button>
         </div>
+        
       </div>
     </div>
   );
